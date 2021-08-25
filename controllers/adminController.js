@@ -27,6 +27,30 @@ const adminController = {
       .then(restaurant => {
         return res.render('admin/restaurant', { restaurant })
       })
+  },
+  editRestaurant: (req, res) => {
+    return Restaurant.findByPk(req.params.id, {raw:true})
+      .then(restaurant => {
+        return res.render('admin/create', { restaurant })
+      })
+  },
+  putRestaurant: (req, res) => {
+    const { name, tel, address, opening_hours, description } = req.body
+    if (!name || !tel || !address || !opening_hours || !description) {
+      req.flash('error_messages', "Forms can't be empty")
+      return res.redirect('back')
+    }
+
+    return Restaurant.findByPk(req.params.id)
+      .then(restaurant => {
+        restaurant.update({
+          name, tel, address, opening_hours, description
+        })
+      })
+      .then(restaurant => {
+        req.flash('success_messages', 'successfully updated !!!')
+        res.redirect('/admin/restaurants')
+      })
   }
 }
 

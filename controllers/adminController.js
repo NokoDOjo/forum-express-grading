@@ -1,8 +1,11 @@
 const db = require('../models') 
 const Restaurant = db.Restaurant
+const User = db.User
 const fs = require('fs')
 const restaurant = require('../models/restaurant')
+const helpers = require('../_helpers')
 const imgur = require('imgur-node-api')
+const { isError } = require('util')
 const IMGUR_CLIENT_ID = '211e51de91aa4f4'
 
 
@@ -100,6 +103,28 @@ const adminController = {
             res.redirect('/admin/restaurants')
           })
       })
+  },
+  getUsers: (req, res) => {
+    return User.findAll({raw: true}).then(users => {
+      const currentUser = helpers.getUser(req).id
+      return res.render('admin/users', { users, currentUser })
+    })
+  },
+  toggleAdmin: (req, res) => {
+    const id = req.params.id
+    const currentUser = helpers.getUser(req).id
+    return User.findByPk(id).then(user => {
+      // if (user.id === currentUser ) {
+      //   req.flash('error_messages', `帳號正在使用中，無法更改使用者權限 !!!`)
+      //   return res.redirect('/admin/users')
+      // }
+      user.isAdmin === false ? user.isAdmin = true : user.isAdmin = false
+      return user.update({ isAdmin: user.isAdmin })
+        .then(() => {
+          req.flash('success_messages', `成功修改${user.name}的使用者權限`)
+          res.redirect('/admin/users')
+        })
+    })
   }
 }
 

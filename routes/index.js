@@ -7,13 +7,13 @@ const helpers = require('../_helpers')
 
 module.exports = (app, passport) => {
   const authenticated = (req, res, next) => {
-    if (helpers.isAuthenticated(req)) {
+    if (helpers.ensureAuthenticated(req)) {
       return next()
     }
     res.redirect('/signin')
   }
   const authenticatedAdmin = (req, res, next) => {
-    if (helpers.isAuthenticated(req)) {
+    if (helpers.ensureAuthenticated(req)) {
       if (helpers.getUser(req).isAdmin) { return next() }
       return res.redirect('/')
     }
@@ -38,6 +38,10 @@ module.exports = (app, passport) => {
   app.put('/admin/restaurants/:id', authenticatedAdmin, upload.single('image'), adminController.putRestaurant)
   
   app.delete('/admin/restaurants/:id', authenticatedAdmin, adminController.deleteRestaurant)
+
+  app.get('/admin/users', authenticatedAdmin, adminController.getUsers)
+
+  app.put('/admin/users/:id/toggleAdmin', authenticatedAdmin, adminController.toggleAdmin)
   
   app.get('/signup', userController.signUpPage)
 

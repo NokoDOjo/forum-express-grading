@@ -21,7 +21,12 @@ const adminController = {
     })
   },
   createRestaurant: (req, res) => {
-    return res.render('admin/create')
+    Category.findAll({
+      raw:true, 
+      nest:true
+    }).then(categories => {
+      return res.render('admin/create', { categories })
+    })
   },
   postRestaurant: (req, res) => {
     const { name, tel, address, opening_hours, description } = req.body
@@ -35,7 +40,8 @@ const adminController = {
       imgur.upload(file.path, (err, img) => {
         return Restaurant.create({
           name, tel, address, opening_hours, description,
-          image: file ? img.data.link : null
+          image: file ? img.data.link : null,
+          CategoryId: req.body.categoryId
         }).then((restaurant) => {
           req.flash('success_messages', 'restaurant was successfully created')
           return res.redirect('/admin/restaurants')
@@ -61,10 +67,15 @@ const adminController = {
       })
   },
   editRestaurant: (req, res) => {
-    return Restaurant.findByPk(req.params.id, {raw:true})
+    Category.findAll({
+      raw: true,
+      nest: true
+    }).then(categories => {
+      return Restaurant.findByPk(req.params.id)
       .then(restaurant => {
-        return res.render('admin/create', { restaurant })
+        return res.render('admin/create', { categories, restaurant: restaurant.toJSON() })
       })
+    })
   },
   putRestaurant: (req, res) => {
     const { name, tel, address, opening_hours, description } = req.body

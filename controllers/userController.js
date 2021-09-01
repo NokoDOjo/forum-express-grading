@@ -1,9 +1,10 @@
 const bcrypt = require('bcryptjs') 
 const db = require('../models')
 const User = db.User
+const Comment = db.Comment
+const Restaurant = db.Restaurant
 const helpers = require('../_helpers')
 const imgur = require('imgur-node-api')
-const { fakeServer } = require('sinon')
 const IMGUR_CLIENT_ID = '211e51de91aa4f4'
 
 const userController = {
@@ -48,9 +49,14 @@ const userController = {
     res.redirect('/signin')
   },
   getUser: (req, res) => {
-    return User.findByPk(req.params.id)
+    return User.findByPk(req.params.id, {
+      include: [
+        { model: Comment, include: [Restaurant]}
+      ]
+    })
       .then(user => {
-        return res.render('user', { user: user.toJSON() })
+        let totalComments = user.Comments.length
+        return res.render('user', { user: user.toJSON(), totalComments })
       })
   },
   editUser: (req, res) => {

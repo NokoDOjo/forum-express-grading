@@ -101,11 +101,11 @@ const userController = {
             name: req.body.name,
             image: user.image
           })
-        })
           .then(() => {
             req.flash('success_messages', '已成功編輯使用者資料')
             res.redirect(`/users/${req.params.id}`)
           })
+        })
     }
   }
 

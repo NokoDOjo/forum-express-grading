@@ -41,6 +41,10 @@ module.exports = (app, passport) => {
 
   app.delete('/like/:restaurantId', authenticated, userController.removeLike)
 
+  app.post('/following/:userId', authenticated, userController.addFollowing)
+
+  app.delete('/following/:userId', authenticated, userController.removeFollowing)
+
   app.get('/users/top', authenticated, userController.getTopUser)
 
   app.get('/users/:id', authenticated, userController.getUser)

@@ -41,6 +41,8 @@ module.exports = (app, passport) => {
 
   app.delete('/like/:restaurantId', authenticated, userController.removeLike)
 
+  app.get('/users/top', authenticated, userController.getTopUser)
+
   app.get('/users/:id', authenticated, userController.getUser)
 
   app.get('/users/:id/edit', authenticated, userController.editUser)

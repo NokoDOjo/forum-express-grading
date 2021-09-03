@@ -1,4 +1,6 @@
 const db = require('../models')
+const restaurant = require('../models/restaurant')
+const user = require('../models/user')
 const Restaurant = db.Restaurant
 const Category = db.Category
 const Comment = db.Comment
@@ -104,6 +106,22 @@ const restController = {
         restaurant.increment('viewCounts', { by: 1 })
         return res.render('dashboard', { restaurant: restaurant.toJSON() })
       })
+  },
+  getTopRestaurants: (req, res) => {
+    return Restaurant.findAll({
+      include: [
+        { model: User, as: 'FavoritedUsers' }
+      ]
+    }).then(restaurants => {
+      restaurants = restaurants.map(restaurant => ({
+        ...restaurant.dataValues,
+        FavoritedCount: restaurant.FavoritedUsers.length,
+        isFavorited: restaurant.FavoritedUsers.map(d => d.id).includes(req.user.id)
+      }))
+      restaurants = restaurants.sort((a, b) => b.FavoritedCount - a.FavoritedCount)
+      restaurants = restaurants.slice(0, 10)
+      return res.render('topRestaurant', { restaurants })
+    })
   }
 }
 module.exports = restController

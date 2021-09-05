@@ -11,7 +11,7 @@ const IMGUR_CLIENT_ID = '211e51de91aa4f4'
 
 
 const adminController = {
-  getRestaurants: (req, res) => {
+  getRestaurants: (req, res, next) => {
     return Restaurant.findAll({
       raw: true,
       nest:true,
@@ -19,16 +19,18 @@ const adminController = {
     }).then(restaurants => {
       return res.render('admin/restaurants', { restaurants })
     })
+      .catch(next)
   },
-  createRestaurant: (req, res) => {
+  createRestaurant: (req, res, next) => {
     Category.findAll({
       raw:true, 
       nest:true
     }).then(categories => {
       return res.render('admin/create', { categories })
     })
+      .catch(next)
   },
-  postRestaurant: (req, res) => {
+  postRestaurant: (req, res, next) => {
     const { name, tel, address, opening_hours, description } = req.body
     const { file } = req
     if ( !name || !tel || !address || !opening_hours || !description ) {
@@ -45,7 +47,8 @@ const adminController = {
         }).then((restaurant) => {
           req.flash('success_messages', 'restaurant was successfully created')
           return res.redirect('/admin/restaurants')
-        })
+        }).catch(next)
+          
       })
     } else {
       return Restaurant.create({
@@ -54,19 +57,20 @@ const adminController = {
       }).then((restaurant) => {
         req.flash('success_messages', 'restaurant was successfully created')
         return res.redirect('/admin/restaurants')
-      })
+      }).catch(next)
+        
     }
   },
-  getRestaurant: (req, res) => {
+  getRestaurant: (req, res, next) => {
     return Restaurant.findByPk(req.params.id, { 
       include: [Category]
      })
       .then(restaurant => {
         console.log(restaurant)
         return res.render('admin/restaurant', { restaurant: restaurant.toJSON() })
-      })
+      }).catch(next)
   },
-  editRestaurant: (req, res) => {
+  editRestaurant: (req, res, next) => {
     Category.findAll({
       raw: true,
       nest: true
@@ -75,9 +79,9 @@ const adminController = {
       .then(restaurant => {
         return res.render('admin/create', { categories, restaurant: restaurant.toJSON() })
       })
-    })
+    }).catch(next)
   },
-  putRestaurant: (req, res) => {
+  putRestaurant: (req, res, next) => {
     const { name, tel, address, opening_hours, description } = req.body
     const { file } = req
     if (!name || !tel || !address || !opening_hours || !description) {
@@ -98,7 +102,7 @@ const adminController = {
               req.flash('success_messages', 'restaurant was successfully created')
               return res.redirect('/admin/restaurants')
             })
-        })
+        }).catch(next)
       })
     } else {
       return Restaurant.findByPk(req.params.id)
@@ -111,25 +115,25 @@ const adminController = {
             req.flash('success_messages', 'restaurant was successfully created')
             return res.redirect('/admin/restaurants')
           })
-        })
+        }).catch(next)
     }
   },
-  deleteRestaurant: (req, res) => {
+  deleteRestaurant: (req, res, next) => {
     return Restaurant.findByPk(req.params.id)
       .then(restaurant => {
         restaurant.destroy()
           .then(restaurant => {
             res.redirect('/admin/restaurants')
           })
-      })
+      }).catch(next)
   },
-  getUsers: (req, res) => {
+  getUsers: (req, res, next) => {
     return User.findAll({raw: true}).then(users => {
       const currentUser = helpers.getUser(req).id
       return res.render('admin/users', { users, currentUser })
-    })
+    }).catch(next)
   },
-  toggleAdmin: (req, res) => {
+  toggleAdmin: (req, res, next) => {
     const id = req.params.id
     const currentUser = helpers.getUser(req).id
     return User.findByPk(id).then(user => {
@@ -142,7 +146,7 @@ const adminController = {
         .then(() => {
           req.flash('success_messages', `成功修改${user.name}的使用者權限`)
           res.redirect('/admin/users')
-        })
+        }).catch(next)
     })
   }
 }

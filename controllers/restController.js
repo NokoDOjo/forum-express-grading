@@ -9,7 +9,7 @@ const pageLimit = 10
 
 
 const restController = {
-  getRestaurants: (req, res) => {
+  getRestaurants: (req, res, next) => {
     let offset = 0
     const whereQuery = {}
     let categoryId = ''
@@ -54,9 +54,9 @@ const restController = {
           next
         })
       })
-    })
+    }).catch(next)
   },
-  getRestaurant: (req, res) => {
+  getRestaurant: (req, res, next) => {
     return Restaurant.findByPk(req.params.id, {
       include: [
         Category,
@@ -72,9 +72,9 @@ const restController = {
         isFavorited,
         isLiked
       })
-    })
+    }).catch(next)
   },
-  getFeeds: (req, res) => {
+  getFeeds: (req, res, next) => {
     return Promise.all([
       Restaurant.findAll({
         limit: 10,
@@ -95,9 +95,9 @@ const restController = {
         restaurants,
         comments
       })
-    })
+    }).catch(next)
   },
-  getDashboard: (req, res) => {
+  getDashboard: (req, res, next) => {
     return Restaurant.findByPk(req.params.id, { include: [
         Category,
         { model: Comment }
@@ -105,9 +105,9 @@ const restController = {
       .then(restaurant => {
         restaurant.increment('viewCounts', { by: 1 })
         return res.render('dashboard', { restaurant: restaurant.toJSON() })
-      })
+      }).catch(next)
   },
-  getTopRestaurants: (req, res) => {
+  getTopRestaurants: (req, res, next) => {
     return Restaurant.findAll({
       include: [
         { model: User, as: 'FavoritedUsers' }
@@ -121,7 +121,7 @@ const restController = {
       restaurants = restaurants.sort((a, b) => b.FavoritedCount - a.FavoritedCount)
       restaurants = restaurants.slice(0, 10)
       return res.render('topRestaurant', { restaurants })
-    })
+    }).catch(next)
   }
 }
 module.exports = restController

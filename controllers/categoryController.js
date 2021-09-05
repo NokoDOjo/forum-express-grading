@@ -1,7 +1,7 @@
 const db = require('../models')
 const Category = db.Category
 let categoryController = {
-  getCategories: (req, res) => {
+  getCategories: (req, res, next) => {
     return Category.findAll({ 
       raw: true,
       nest: true
@@ -12,13 +12,13 @@ let categoryController = {
             return res.render('admin/categories', {
               categories, category: category.toJSON()
             })
-          })
+          }).catch(next)
       } else {
       return res.render('admin/categories', { categories })
       }
     })
   },
-  postCategory: (req, res) => {
+  postCategory: (req, res, next) => {
     if (!req.body.name) {
       req.flash('error_messages', 'name didn\'t exist')
       return res.redirect('back')
@@ -28,10 +28,10 @@ let categoryController = {
       })
         .then(category => {
           res.redirect('/admin/categories')
-        })
+        }).catch(next)
     }
   },
-  putCategory: (req, res) => {
+  putCategory: (req, res, next) => {
     if (!req.body.name) {
       req.flash('error_messages', 'name didn\'t exist')
       return res.redirect('back')
@@ -42,17 +42,17 @@ let categoryController = {
             .then((category) => {
               res.redirect('/admin/categories')
             })
-        })
+        }).catch(next)
     }  
   },
-  deleteCategory: (req, res) => {
+  deleteCategory: (req, res, next) => {
     return Category.findByPk(req.params.id)
       .then((category) => {
         category.destroy()
           .then((category) => {
             res.redirect('/admin/categories')
           })
-      })
+      }).catch(next)
   }
 }
 module.exports = categoryController

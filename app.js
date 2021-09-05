@@ -3,6 +3,7 @@ const exphbs = require('express-handlebars')
 const flash = require('connect-flash')
 const Helpers = require('handlebars-helpers')()
 const helpers = require('./_helpers')
+const { logErrors } = require('./middleware/error')
 const session = require('express-session')
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()

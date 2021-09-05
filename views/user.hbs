@@ -5,20 +5,64 @@
   <div class="col-lg-6">
     <h2>{{user.name}}</h2>
     <p>{{user.email}}</p>
-    <h4>{{totalComments}}已評論餐廳</h4>
+    <h4>{{commentedRestNum}} 已評論餐廳</h4>
+    <h4>{{restNum}} 收藏的餐廳</h4>
+    <h4>{{followingNum}} followings</h4>
+    <h4>{{followerNum}} followers</h4>
+
     <a href="/users/{{user.id}}/edit" type="button" class="btn btn-outline-info mt-5">
       edit
     </a>
   </div>
 </div>
 
-<div class="card">
-  <h5 class="card-header">{{totalComments}}已評論餐廳</h5>
-  <div class="card-body d-flex flex-wrap">
-    {{#each user.Comments}}
-      <a href="/restaurants/{{this.Restaurant.id}}" style="display: inline-block;">
-        <img src="{{this.Restaurant.image}}" style="width: 200px ; margin-bottom: 25px ; margin-left: 20px">
+<div class="row my-5">
+<div class="card col-md-3 mb-3 mr-5" style="width: 100%;">
+  <h5 class="card-header">{{followingNum}} followings</h5>
+
+  <div class="card-body row d-flex flex-wrap">
+    {{#each followings}}
+      <a href="/users/{{this.id}}" style="display: inline-block;">
+        <img src="{{this.image}}" style="max-width:100px ;margin-bottom: 25px ; margin-left: 20px">
       </a>
     {{/each}}
   </div>
+</div>
+
+<div class="card col-md-8 mb-3" style="width: 100%;">
+  <h5 class="card-header">{{commentedRestNum}} 已評論餐廳</h5>
+
+  <div class="card-body row d-flex flex-wrap">
+    {{#each commentedRestaurants}}
+      <a href="/restaurants/{{this.id}}" style="display: inline-block;">
+        <img src="{{this.image}}" style="max-width:100px ; margin-bottom: 25px ; margin-left: 20px">
+      </a>
+    {{/each}}
+  </div>
+</div>
+
+<div class="card col-md-3 mb-3 mr-5" style="width: 100%;">
+  <h5 class="card-header">{{followerNum}} followers</h5>
+
+  <div class="card-body row d-flex flex-wrap">
+    {{#each followers}}
+      <a href="/users/{{this.id}}" style="display: inline-block;">
+        <img src="{{this.image}}" style="max-width:100px ;margin-bottom: 25px ; margin-left: 20px">
+      </a>
+    {{/each}}
+  </div>
+</div>
+
+<div class="card col-md-8 mb-3" style="width: 100%;">
+  <h5 class="card-header">{{restNum}} 收藏的餐廳</h5>
+
+  <div class="card-body row d-flex flex-wrap">
+    {{#each restaurants}}
+      <a href="/restaurants/{{this.id}}" style="display: inline-block;">
+        <img src="{{this.image}}" style="max-width:100px ;margin-bottom: 25px ; margin-left: 20px">
+      </a>
+    {{/each}}
+  </div>
+</div>
+
 </div>

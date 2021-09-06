@@ -1,3 +1,4 @@
+const { response } = require("../../app");
 const db = require("../../models");
 const Restaurant = db.Restaurant;
 const Category = db.Category;
@@ -10,7 +11,14 @@ const adminController = {
   },
   getRestaurant: (req, res) => {
     adminService.getRestaurant(req, res, (data) => {
-      return res.json(data)
+      return res.json(data);
+    });
+  },
+  deleteRestaurant: (req, res) => {
+    adminControllerService.deleteRestaurant(req, res, (data) => {
+      if (data['status'] === 'success') {
+        return res.redirect('/admin/restaurants')
+      }
     })
   },
 };

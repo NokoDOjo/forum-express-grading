@@ -16,9 +16,7 @@ const adminController = {
   },
   deleteRestaurant: (req, res) => {
     adminControllerService.deleteRestaurant(req, res, (data) => {
-      if (data['status'] === 'success') {
-        return res.redirect('/admin/restaurants')
-      }
+      return res.json(data)
     })
   },
 };

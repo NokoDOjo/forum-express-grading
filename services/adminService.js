@@ -3,23 +3,43 @@ const Restaurant = db.Restaurant
 const Category = db.Category
 
 const adminService = {
-  getRestaurants: (req, res, callback) => {
+  getRestaurants: (req, res, cb, next) => {
     return Restaurant.findAll({
       raw: true,
       nest: true,
       include: [Category],
-    }).then((restaurants) => {
-      callback({ restaurants });
-    });
+    })
+      .then((restaurants) => {
+        cb({ restaurants });
+      })
+      .catch(next);
   },
-  getRestaurant: (req, res, callback) => {
+  getRestaurant: (req, res, cb, next) => {
     return Restaurant.findByPk(req.params.id, {
       raw: true,
       nest: true,
       include: [Category],
-    }).then((restaurant) => {
-      callback({ restaurant})
-    });
+    })
+      .then((restaurant) => {
+        cb({ restaurant });
+      })
+      .catch(next);
+  },
+  getCategories: (req, res, cb, next) => {
+    return Category.findAll({ raw: true, nest: true })
+      .then((categories) => {
+        if (req.params.id) {
+          Category.findByPk(req.params.id)
+            .then((category) => {
+              category = category.toJSON();
+              return cb({ categories, category });
+            })
+            .catch((err) => console.log(err));
+        } else {
+          return cb({ categories });
+        }
+      })
+      .catch(next);
   },
 };
 

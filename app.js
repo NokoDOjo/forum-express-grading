@@ -18,6 +18,7 @@ app.engine('hbs', exphbs({ Helpers, defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 
 app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }))
 app.use(flash())
 

@@ -66,6 +66,52 @@ const adminService = {
         .catch(next);
     }
   },
+  putRestaurant: (req, res, cb, next) => {
+    const { name, tel, address, opening_hours, description } = req.body;
+    const { file } = req;
+    if (!name) {
+      return callback({ status: "error", message: "name didn't exist" });
+    }
+
+    if (file) {
+      imgur.setClientID(IMGUR_CLIENT_ID);
+      imgur.upload(file.path, (err, img) => {
+        return Restaurant.findByPk(req.params.id)
+          .then((restaurant) => {
+            restaurant
+              .update({
+                name,
+                tel,
+                address,
+                opening_hours,
+                description,
+                image: file ? img.data.link : restaurant.image,
+              })
+              .then((restaurant) => {
+                cb({ status: 'success', message: 'successfully edited'})
+              });
+          })
+          .catch(next);
+      });
+    } else {
+      return Restaurant.findByPk(req.params.id)
+        .then((restaurant) => {
+          restaurant
+            .update({
+              name,
+              tel,
+              address,
+              opening_hours,
+              description,
+              image: restaurant.image,
+            })
+            .then((restaurant) => {
+              cb({ status: "success", message: "successfully edited" });
+            });
+        })
+        .catch(next);
+    }
+  },
   getCategories: (req, res, cb, next) => {
     return Category.findAll({ raw: true, nest: true })
       .then((categories) => {

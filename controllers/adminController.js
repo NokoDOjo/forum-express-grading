@@ -57,59 +57,13 @@ const adminController = {
       .catch(next);
   },
   putRestaurant: (req, res, next) => {
-    const { name, tel, address, opening_hours, description } = req.body;
-    const { file } = req;
-    if (!name || !tel || !address || !opening_hours || !description) {
-      req.flash("error_messages", "Forms can't be empty");
-      return res.redirect("back");
-    }
-
-    if (file) {
-      imgur.setClientID(IMGUR_CLIENT_ID);
-      imgur.upload(file.path, (err, img) => {
-        return Restaurant.findByPk(req.params.id)
-          .then((restaurant) => {
-            restaurant
-              .update({
-                name,
-                tel,
-                address,
-                opening_hours,
-                description,
-                image: file ? img.data.link : restaurant.image,
-              })
-              .then((restaurant) => {
-                req.flash(
-                  "success_messages",
-                  "restaurant was successfully created"
-                );
-                return res.redirect("/admin/restaurants");
-              });
-          })
-          .catch(next);
-      });
-    } else {
-      return Restaurant.findByPk(req.params.id)
-        .then((restaurant) => {
-          restaurant
-            .update({
-              name,
-              tel,
-              address,
-              opening_hours,
-              description,
-              image: restaurant.image,
-            })
-            .then((restaurant) => {
-              req.flash(
-                "success_messages",
-                "restaurant was successfully created"
-              );
-              return res.redirect("/admin/restaurants");
-            });
-        })
-        .catch(next);
-    }
+    adminService.putRestaurant(req, res, (data) => {
+      if (data['status'] === 'error') {
+        req.flash('error_message', data['message'])
+      }
+      req.flash('success_messages', data['message'])
+      res.redirect('/admin/restaurants')
+    })
   },
   deleteRestaurant: (req, res, next) => {
     adminService.deleteRestaurant(req, res, (data) => {

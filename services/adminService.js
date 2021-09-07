@@ -47,7 +47,10 @@ const adminService = {
           CategoryId: req.body.categoryId,
         })
           .then((restaurant) => {
-            cb({ status: 'success', message: 'restaurant was successfully created'})
+            cb({
+              status: "success",
+              message: "restaurant was successfully created",
+            });
           })
           .catch(next);
       });
@@ -58,10 +61,13 @@ const adminService = {
         address,
         opening_hours,
         description,
-        image: null, 
+        image: null,
       })
         .then((restaurant) => {
-          cb({ status: 'success', message: 'restaurant was successfully created'})
+          cb({
+            status: "success",
+            message: "restaurant was successfully created",
+          });
         })
         .catch(next);
     }
@@ -88,7 +94,7 @@ const adminService = {
                 image: file ? img.data.link : restaurant.image,
               })
               .then((restaurant) => {
-                cb({ status: 'success', message: 'successfully edited'})
+                cb({ status: "success", message: "successfully edited" });
               });
           })
           .catch(next);
@@ -133,7 +139,32 @@ const adminService = {
       restaurant.destroy().then((restaurant) => {
         cb({ status: "success", message: "" });
       });
-    })
+    });
+  },
+  postCategory: (req, res, cb, next) => {
+    if (!req.body.name) {
+      cb({ status: 'error', message: "name didn't exist"})
+    } else {
+      return Category.create({
+        name: req.body.name
+      })
+        .then(category => {
+          cb({ status: 'success', message: 'category successfully added'})
+        }).catch(next)
+    }
+  },
+  putCategory: (req, res, cb, next) => {
+    if (!req.body.name) {
+      cb({ status:'error', message: "name didn't exist" })
+    } else {
+      return Category.findByPk(req.params.id)
+        .then((category) => {
+          category.update(req.body).then((category) => {
+            cb({ status: "success", message: "category successfully edited" });
+          });
+        })
+        .catch(next);
+    }
   },
 };
 

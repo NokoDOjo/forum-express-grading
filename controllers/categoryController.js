@@ -10,31 +10,14 @@ let categoryController = {
     })
   },
   postCategory: (req, res, next) => {
-    if (!req.body.name) {
-      req.flash('error_messages', 'name didn\'t exist')
-      return res.redirect('back')
-    } else {
-      return Category.create({
-        name: req.body.name
-      })
-        .then(category => {
-          res.redirect('/admin/categories')
-        }).catch(next)
-    }
+    adminService.postCategory(req, res, (data) => {
+      return res.redirect('/admin/categories')
+    })
   },
   putCategory: (req, res, next) => {
-    if (!req.body.name) {
-      req.flash('error_messages', 'name didn\'t exist')
-      return res.redirect('back')
-    } else {
-      return Category.findByPk(req.params.id)
-        .then((category) => {
-          category.update(req.body)
-            .then((category) => {
-              res.redirect('/admin/categories')
-            })
-        }).catch(next)
-    }  
+    adminService.postCategory(req, res, (data) => {
+      return res.redirect('/admin/categories')
+    })
   },
   deleteCategory: (req, res, next) => {
     return Category.findByPk(req.params.id)

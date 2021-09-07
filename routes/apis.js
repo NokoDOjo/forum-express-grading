@@ -40,6 +40,8 @@ router.delete('/admin/categories/:id', categoryController.deleteCategory)
 // JWT signIn
 router.post('/signin', userController.signIn)
 
+router.post('signup', userController.signUp)
+
 
 
 

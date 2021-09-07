@@ -20,13 +20,9 @@ let categoryController = {
     })
   },
   deleteCategory: (req, res, next) => {
-    return Category.findByPk(req.params.id)
-      .then((category) => {
-        category.destroy()
-          .then((category) => {
-            res.redirect('/admin/categories')
-          })
-      }).catch(next)
+    adminService.deleteCategory(req, res, (data) => {
+      return res.redirect('/admin/categories')
+    })
   }
 }
 module.exports = categoryController

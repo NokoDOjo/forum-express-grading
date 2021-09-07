@@ -166,6 +166,15 @@ const adminService = {
         .catch(next);
     }
   },
+  deleteCategory: (req, res, cb, next) => {
+    return Category.findByPk(req.params.id)
+      .then((category) => {
+        category.destroy().then((category) => {
+          cb({ status: 'success', message: 'category successfully deleted'})
+        });
+      })
+      .catch(next);    
+  }
 };
 
 module.exports = adminService

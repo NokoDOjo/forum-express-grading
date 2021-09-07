@@ -5,6 +5,7 @@ const router = express.Router();
 
 const adminController = require("../controllers/api/adminController.js");
 const categoryController = require("../controllers/api/categoryController.js");
+const userController = require('../controllers/api/userController')
 
 router.get("/admin/restaurants", adminController.getRestaurants);
 
@@ -23,6 +24,9 @@ router.post('/admin/categories', categoryController.postCategory)
 router.put('/admin/categories/:id', categoryController.putCategory)
 
 router.delete('/admin/categories/:id', categoryController.deleteCategory)
+
+// JWT signIn
+router.post('/signin', userController.signIn)
 
 
 

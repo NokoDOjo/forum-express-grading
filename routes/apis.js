@@ -3,11 +3,23 @@ const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
 const router = express.Router();
 
+const passport = require('../config/passport')
+
 const adminController = require("../controllers/api/adminController.js");
 const categoryController = require("../controllers/api/categoryController.js");
 const userController = require('../controllers/api/userController')
 
-router.get("/admin/restaurants", adminController.getRestaurants);
+const authenticated = passport.authenticate('jwt', { session: false })
+const authenticatedAdmin = (req, res, next) => {
+  if (req.user) {
+    if (req.user.isAdmin) { return next() }
+    return res.json({ status: 'error', message: 'permission denied' })
+  } else {
+    return res.json({ status: 'error', message: 'permission denied' })
+  }
+}
+
+router.get("/admin/restaurants", authenticated, authenticatedAdmin, adminController.getRestaurants);
 
 router.post('/admin/restaurants', upload.single('image'), adminController.postRestaurant)
 
@@ -27,6 +39,7 @@ router.delete('/admin/categories/:id', categoryController.deleteCategory)
 
 // JWT signIn
 router.post('/signin', userController.signIn)
+
 
 
 

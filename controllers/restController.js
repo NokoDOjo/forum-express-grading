@@ -110,24 +110,21 @@ const restController = {
   },
   getTopRestaurants: (req, res, next) => {
     return Restaurant.findAll({
-      include: [
-        { model: User, as: 'FavoritedUsers' }
-      ]
-    }).then(restaurants => {
-      restaurants = restaurants.map(restaurant => ({
-        ...restaurant.dataValues,
-        isFavorited: restaurant.FavoritedUsers.map(d => d.id).includes(req.user.id)
-      }))
-      Restaurant.findAll({
-        order: [
-          sequelize.literal('favoriteCounts', 'DESC')
-        ],
-        limit: 10
+      limit: 10,
+      order: [["favoriteCounts", "DESC"]],
+      include: [{model: User, as: 'FavoritedUsers'}]
+    })
+      .then((restaurants) => {
+        restaurants = restaurants.map((restaurant) => ({
+          ...restaurant.dataValues,
+          FavoritedCount: restaurant.FavoritedUsers.length,
+          isFavorited: restaurant.FavoritedUsers.map((d) => d.id).includes(
+            req.user.id
+          ),
+        }));
+        return res.render("topRestaurant", { restaurants });
       })
-        .then(restaurant => {
-          return res.render("topRestaurant", { restaurants });
-        })
-    }).catch(next)
+      .catch(next);
   }
 }
 module.exports = restController

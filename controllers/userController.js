@@ -152,6 +152,12 @@ const userController = {
       UserId: req.user.id,
       RestaurantId: req.params.restaurantId
     })
+      .then(() => {
+        Restaurant.findByPk(req.params.restaurantId)
+          .then(restaurant => {
+            restaurant.increment('favoriteCounts', { by: 1 })
+          })
+      })
       .then(restaurant => {
         return res.redirect('back')
       }).catch(next)
@@ -165,6 +171,10 @@ const userController = {
     })
       .then(favorite => {
         favorite.destroy()
+          .then(() => {
+            Restaurant.findByPk(req.params.restaurantId)
+              .then(restaurant => restaurant.decrement('favoriteCounts', { by: 1 }))
+          })
           .then(restaurant => {
             return res.redirect('back')
           })
@@ -231,7 +241,6 @@ const userController = {
           })
       }).catch(next)
   }
-
 }
 
 module.exports = userController
